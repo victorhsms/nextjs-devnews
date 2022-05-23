@@ -1,7 +1,43 @@
-import styles from '../styles/home.module.scss';
+import { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 
-export default function Home() {
+interface Post {
+  id: string;
+  title: string;
+}
+
+interface HomeProps {
+  posts: Post[];
+}
+
+export default function Home({ posts }: HomeProps) {
+  // const [posts,setPosts] = useState<Post[]>([]);
+
+  // useEffect(() => {
+  //   fetch('http://localhost:3333/posts').then((response) => {
+  //     response.json().then((data) => {
+  //       setPosts(data);
+  //     })
+  //   })
+  // }, [])
   return (
-    <h1>Olá <span>dev!</span></h1>
+    <>
+      <h1>Posts</h1>
+      <ul>
+        {posts.map((posts) => (
+          <li key={posts.id}>{posts.title}</li>
+        ))}
+      </ul>
+    </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const response = await fetch('http://localhost:3333/posts');
+  const posts = await response.json();
+  return {
+    props: {
+      posts,
+    },
+  };
 }
